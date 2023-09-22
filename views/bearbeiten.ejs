@@ -1,0 +1,134 @@
+<!-- views/bearbeiten.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bearbeiten</title>
+
+    <%- include('nav') %>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div class="container mt-5">
+
+        <h1>Bearbeiten</h1>
+        <form action="/speichernBearbeitung/<%= fehler.id %>" method="POST">
+            <div class="form-group">
+                <label for="modul">Modul:</label>
+                <input type="text" class="form-control" id="modul" name="modul" value="<%= fehler.modul %>" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="category">Kategorie:</label>
+                <input type="text" class="form-control" id="class" name="class" value="<%= fehler.class %>" readonly>
+            </div>
+    
+            <div class="form-group">
+                <label for="category">Kategorie:</label>
+                <input type="text" class="form-control" id="category" name="category" value="<%= fehler.category %>" readonly>
+            </div>
+    
+            <div class="form-group">
+                <label for="resource">Ressource:</label>
+                <input type="text" class="form-control" id="resource" name="resource" value="<%= fehler.resource %>" readonly>
+            </div>
+    
+            <div class="form-group">
+                <label for="minute">Minute:</label>
+                <input type="text" class="form-control" id="minute" name="minute" value="<%= fehler.minute %>" readonly>
+            </div>
+    
+            <div class="form-group">
+                <label for="seite">Seite:</label>
+                <input type="text" class="form-control" id="seite" name="seite" value="<%= fehler.seite %>" readonly>
+            </div>
+    
+            <div class="form-group">
+                <label for="screenshots">Screenshots:</label>
+                <!-- Kleine Vorschau der Screenshots -->
+                <% screenshots.forEach(function(screenshot, index) { %>
+                    <a href="#" data-toggle="modal" data-target="#screenshotModal<%= index %>">
+                        <img src="data:image/png;base64, <%= screenshot.base64Screenshot %>" alt="Screenshot" class="img-thumbnail">
+                    </a>
+                <% }); %>
+            </div>
+            
+            <% screenshots.forEach(function(screenshot, index) { %>
+                <!-- Modal für vergrößerte Ansicht des Screenshots -->
+                <div class="modal fade" id="screenshotModal<%= index %>" tabindex="-1" role="dialog" aria-labelledby="screenshotModalLabel<%= index %>" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="screenshotModalLabel<%= index %>">Screenshot <%= index + 1 %></h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Große Ansicht des Screenshots im Modal -->
+                                <img src="data:image/png;base64, <%= screenshot.base64Screenshot %>" alt="Screenshot" class="img-fluid">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+            
+
+            <div class="form-group">
+                <label for="comment">Kommentar:</label>
+                <input type="text" class="form-control" id="comment" name="comment" value="<%= fehler.comment %>" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="status">Status:</label>
+                <select class="form-control" id="status" name="status" required>
+                    <option value="Neu" <%= fehler.status === 'Neu' ? 'selected' : '' %>>Neu</option>
+                    <option value="in Bearbeitung" <%= fehler.status === 'in Bearbeitung' ? 'selected' : '' %>>In Bearbeitung</option>
+                    <option value="Abgeschlossen" <%= fehler.status === 'Abgeschlossen' ? 'selected' : '' %>>Abgeschlossen</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="prio">Priorität:</label>
+                <select class="form-control" id="prio" name="prio" required>
+                    <option value="unkritisch" <%= fehler.prio === 'unkritisch' ? 'selected' : '' %>>unkritisch</option>
+                    <option value="kritisch" <%= fehler.prio === 'kritisch' ? 'selected' : '' %>>kritisch</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="id">ID:</label>
+                <input type="text" class="form-control" id="id" name="id" value="<%= fehler.id %>" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="assignee_id">Zugewiesen an:</label>
+                <select class="form-control" id="assignee_id" name="assignee_id" required>
+                    <option value="">Kein Bearbeiter</option>
+                    <% bearbeiter.forEach(function(benutzer) { %>
+                        <option value="<%= benutzer.id %>" <%= fehler.assignee_id === benutzer.id ? 'selected' : '' %>><%= benutzer.username %></option>
+                    <% }); %>
+                </select>
+            </div>
+            
+    
+            <div class="form-group">
+                <label for="notifier_id">Melder:</label>
+                <input type="text" class="form-control" id="notifier_id" name="notifier_id" value="<%= notifierUsername %>" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="message">Nachricht:</label>
+                <textarea class="form-control" id="message" name="message" rows="4"></textarea>
+            </div>
+
+            
+
+            <button type="submit" class="btn btn-primary">Änderungen speichern</button>
+        </form>
+    </div>
+</body>
+</html>

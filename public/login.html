@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center align-items-center min-vh-100">
+            <div class="col-md-6">
+                <h1>Login</h1>
+                <form action="/login" method="POST">
+                    <div class="form-group">
+                        <label for="username">Benutzername:</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Passwort:</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Anmelden</button>
+                </form>
+                <!--<p>Noch keinen Account? <a href="/register">Registrieren</a></p>-->
+            </div>
+        </div>
+    </div>
+</body>
+</html>

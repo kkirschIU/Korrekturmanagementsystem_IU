@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meine Fehlerübersicht</title>
+
+    <%- include('nav') %>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Alle Meldungen</h1>
+        <table id="allReportsTable" class="table table-bordered table-striped">            <thead class="thead-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Modul</th>
+                    <th>Klasse</th>
+                    <th>Kategorie</th>
+                    <th>Resource</th>
+                    <th>Minute</th>
+                    <th>Seite</th>
+                    <th>Status</th>
+                    <th>Prio</th>
+                    <th>Datum</th>
+                    <th>Bearbeiten</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% reports.forEach(function(fehler) { %>
+                    <tr>
+                        <td><%= fehler.id %></td>
+                        <td><%= fehler.modul %></td>
+                        <td><%= fehler.class %></td>
+                        <td><%= fehler.category %></td>
+                        <td><%= fehler.resource %></td>
+                        <td><%= fehler.minute %></td>
+                        <td><%= fehler.site %></td>
+                        <td><%= fehler.status %></td>
+                        <td><%= fehler.prio %></td>
+                        <td><%= new Date(fehler.date).toLocaleDateString('de-DE') %></td>                        <td>                
+                            <a href="/bearbeiten/<%= fehler.id %>">Bearbeiten</a>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            $('#allReportsTable').DataTable();
+        });
+    </script>
+</body>
+</html>
