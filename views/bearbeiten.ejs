@@ -22,7 +22,7 @@
             </div>
 
             <div class="form-group">
-                <label for="category">Kategorie:</label>
+                <label for="category">Klasse:</label>
                 <input type="text" class="form-control" id="class" name="class" value="<%= fehler.class %>" readonly>
             </div>
     
@@ -88,6 +88,7 @@
                     <option value="Neu" <%= fehler.status === 'Neu' ? 'selected' : '' %>>Neu</option>
                     <option value="in Bearbeitung" <%= fehler.status === 'in Bearbeitung' ? 'selected' : '' %>>In Bearbeitung</option>
                     <option value="Abgeschlossen" <%= fehler.status === 'Abgeschlossen' ? 'selected' : '' %>>Abgeschlossen</option>
+                    <option value="unklar" <%= fehler.status === 'unklar' ? 'selected' : '' %>>unklar</option>
                 </select>
             </div>
 

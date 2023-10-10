@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bearbeiten</title>
+
+    <%- include('nav') %>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div class="container mt-5">
+
+        <h1>Meldung unklar - Bitte ergänzen</h1>
+        <form action="/speichernBearbeitung-melder/<%= fehler.id %>" method="POST">
+            <div class="form-group">
+                <label for="modul">Modul:</label>
+                <input type="text" class="form-control" id="modul" name="modul" value="<%= fehler.modul %>" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="category">Kategorie:</label>
+                <input type="text" class="form-control" id="class" name="class" value="<%= fehler.class %>" >
+            </div>
+    
+            <div class="form-group">
+                <label for="category">Kategorie:</label>
+                <input type="text" class="form-control" id="category" name="category" value="<%= fehler.category %>" >
+            </div>
+    
+            <div class="form-group">
+                <label for="resource">Ressource:</label>
+                <input type="text" class="form-control" id="resource" name="resource" value="<%= fehler.resource %>" >
+            </div>
+    
+            <div class="form-group">
+                <label for="minute">Minute:</label>
+                <input type="text" class="form-control" id="minute" name="minute" value="<%= fehler.minute %>">
+            </div>
+    
+            <div class="form-group">
+                <label for="seite">Seite:</label>
+                <input type="text" class="form-control" id="seite" name="seite" value="<%= fehler.seite %>">
+            </div>
+    
+            
+
+            <div class="form-group">
+                <label for="comment">Kommentar:</label>
+                <input type="text" class="form-control" id="comment" name="comment" value="<%= fehler.comment %>" >
+            </div>
+
+            <div class="form-group">
+                <label for="id">ID:</label>
+                <input type="text" class="form-control" id="id" name="id" value="<%= fehler.id %>" readonly>
+            </div>
+
+           
+
+            <button type="submit" class="btn btn-primary">Änderungen speichern</button>
+        </form>
+    </div>
+</body>
+</html>

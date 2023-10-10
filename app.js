@@ -301,8 +301,45 @@ app.get('/bearbeiten/:id', (req, res) => {
     });
 });
 
+app.get('/bearbeiten-melder/:id', (req, res) => {
+    const fehlerId = req.params.id;
 
+    // Hier holst du die Daten für den ausgewählten Fehler (fehlerId) aus deiner Datenbank
+    connection.query('SELECT * FROM reports WHERE id = ?', [fehlerId], (err, results) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Fehler beim Abrufen des Fehlers');
+        } else {
+            if (results.length > 0) {
+                const fehler = results[0];
 
+                 // Hier holst du die Screenshots für den Fehlerbericht aus der Datenbank
+                 connection.query('SELECT * FROM screenshots WHERE report_id = ?', [fehler.id], (err, screenshotResults) => {
+                    if (err) {
+                        console.error(err);
+                        res.status(500).send('Fehler beim Abrufen der Screenshots');
+                    } else {
+                        // Verarbeite die Screenshots, indem du sicherstellst, dass screenshotResult.screenshot_data nicht null ist
+                        const screenshots = screenshotResults.map((screenshotResult) => {
+                            if (screenshotResult.screenshot_data) {
+                                return {
+                                    base64Screenshot: screenshotResult.screenshot_data.toString('base64'),
+                                    filename: screenshotResult.screenshot_filename
+                                };
+                            }
+                            return null; // Wenn screenshot_data null ist, überspringe diesen Screenshot
+                        }).filter((screenshot) => screenshot !== null);
+
+                        // Rendere die "bearbeiten.ejs"-Seite und übergebe die Daten an die Vorlage
+                        res.render('bearbeiten-melder', { fehler, screenshots });
+                    }
+                });
+            } else {
+                res.status(404).send('Fehler nicht gefunden');
+            }
+        }
+    });
+});
 
 
 
@@ -323,6 +360,31 @@ app.post('/speichernBearbeitung/:id', (req, res) => {
             res.redirect('/alleFehler');
         }
     });
+});
+
+app.post('/speichernBearbeitung-melder/:id', (req, res) => {
+    const id = req.params.id;
+    const modul = req.body.modul;
+    const category = req.body.category;
+    const resource = req.body.resource;
+    const minute = req.body.minute;
+    const seite = req.body.seite;
+    const comment = req.body.comment;
+    const status = "in bearbeitung";
+
+    connection.query(
+        'UPDATE reports SET modul = ?, category = ?, resource = ?, minute = ?, site = ?, comment = ?, status = ? WHERE id = ?',
+        [modul, category, resource, minute, seite, comment, status, id],
+        (err) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send('Fehler beim Speichern der Änderungen');
+            } else {
+                // Nach dem Speichern der Änderungen zurückspringen zur alleFehler-Ansicht oder einer anderen Seite
+                res.redirect('/overview');
+            }
+        }
+    );
 });
 
 

@@ -15,10 +15,10 @@
     <div class="container mt-5">
         <div class="row justify-content-between mb-3">
             <div class="col">
-                <h1>Meine Fehlerübersicht</h1>
+                <h1>Meine Meldeübersicht</h1>
             </div>
             <div class="col-auto">
-                <a href="/report" class="btn btn-primary">Fehler melden</a>
+                <a href="/report" class="btn btn-primary">Meldung senden</a>
             </div>
         </div>        <table id="errorTable" class="table table-bordered table-striped">            <thead class="thead-dark">
                 <tr>
@@ -33,6 +33,7 @@
                     <th>Prio</th>
                     <th>Kommentar</th>
                     <th>Datum</th>
+                    <th>Rückfrage</th>
                 </tr>
             </thead>
             <tbody>
@@ -49,7 +50,11 @@
                         <td><%= fehler.prio %></td>
                         <td><%= fehler.comment %></td>
                         <td><%= new Date(fehler.date).toLocaleDateString('de-DE') %></td>
-                        
+                        <td>
+                            <% if (fehler.status === "unklar") { %>
+                                <a href="/bearbeiten-melder/<%= fehler.id %>" class="btn btn-warning">Bearbeiten</a>
+                            <% } %>
+                        </td>
                     </tr>
                 <% }); %>
             </tbody>
