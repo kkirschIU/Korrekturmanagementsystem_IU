@@ -49,33 +49,36 @@
             <div class="form-group">
                 <label for="screenshots">Screenshots:</label>
                 <!-- Kleine Vorschau der Screenshots -->
-                <% screenshots.forEach(function(screenshot, index) { %>
-                    <a href="#" data-toggle="modal" data-target="#screenshotModal<%= index %>">
-                        <img src="data:image/png;base64, <%= screenshot.base64Screenshot %>" alt="Screenshot" class="img-thumbnail">
-                    </a>
-                <% }); %>
+                <!--<% screenshots.forEach(function(screenshot, index) { %>-->
+                    <a href="#" data-toggle="modal" data-target="#screenshotModal">
+                        <!--
+                            <img src="/uploads/<%= screenshot %>" alt="Screenshot" class="img-thumbnail">
+
+                            <img src="data:image/png;base64, <%= screenshot.base64Screenshot %>" alt="Screenshot" class="img-thumbnail">-->
+                            <img src="/uploads/<%= screenshot %>" alt="Screenshot" class="img-thumbnail">
+                        </a>
+                <!--<% }); %>-->
             </div>
+
             
-            <% screenshots.forEach(function(screenshot, index) { %>
-                <!-- Modal für vergrößerte Ansicht des Screenshots -->
-                <div class="modal fade" id="screenshotModal<%= index %>" tabindex="-1" role="dialog" aria-labelledby="screenshotModalLabel<%= index %>" aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="screenshotModalLabel<%= index %>">Screenshot <%= index + 1 %></h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <!-- Große Ansicht des Screenshots im Modal -->
-                                <img src="data:image/png;base64, <%= screenshot.base64Screenshot %>" alt="Screenshot" class="img-fluid">
-                            </div>
+            <!-- Modal für vergrößerte Ansicht des Screenshots -->
+            <div class="modal fade" id="screenshotModal" tabindex="-1" role="dialog" aria-labelledby="screenshotModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="screenshotModalLabel">Screenshot</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Große Ansicht des Screenshots im Modal -->
+                            <img src="/uploads/<%= screenshots%>" alt="Screenshot" class="img-fluid">
                         </div>
                     </div>
                 </div>
-            <% }); %>
-            
+            </div>
+
 
             <div class="form-group">
                 <label for="comment">Kommentar:</label>
@@ -131,5 +134,9 @@
             <button type="submit" class="btn btn-primary">Änderungen speichern</button>
         </form>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap JavaScript (Popper.js is included) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.5.2/dist/js/bootstrap.min.js"></script>
 </body>
 </html>

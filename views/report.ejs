@@ -53,7 +53,13 @@
                         <label for="resource">Ressource:</label>
                         <select class="form-control" id="resource" name="resource" required>
                             <option value="Script">Script</option>
-                            <option value="Video">Video</option>
+                            <option value="Interactive Script">Interactive Script</option>
+                            <option value="Musterklausur">Musterklausur</option>
+                            <option value="Online Test">Online Test</option>
+                            <option value="Präsentation">Präsentation</option>
+                            <option value="Vodcast">Vodcast</option>
+                            <option value="Podcast">Podcast</option>
+                            <option value="Library Service">Library Service</option>
                         </select>
                     </div>
 
@@ -70,7 +76,7 @@
 
                     <div class="form-group">
                         <label for="screenshot">Screenshot:</label>
-                        <input type="file" class="form-control-file" id="screenshot" name="screenshots" multiple>
+                        <input type="file" class="form-control-file" id="screenshot" name="screenshots">
                     </div>
 
                     <div class="form-group">
@@ -104,14 +110,14 @@
 
             function toggleFields() {
             const selectedResource = $('#resource').val();
-            if (selectedResource === 'Video') {
+            if (selectedResource === 'Vodcast' || selectedResource === 'Podcast') {
                 $('#minuteGroup').show();
                 $('#seiteGroup').hide();
                 $('#minute').prop('required', true); // Markieren Sie das "Minute"-Feld als Pflichtfeld
                 $('#seite').prop('required', false); // "Seite"-Feld nicht als Pflichtfeld markieren
                 // Löschen Sie den Inhalt des "Seite"-Feldes
                 $('#seite').val('');
-            } else if (selectedResource === 'Script') {
+            }else if (selectedResource === 'Script' || selectedResource === 'Interactive Script' || selectedResource === 'Musterklausur' || selectedResource === 'Online Test' || selectedResource === 'Präsentation') {
                 $('#minuteGroup').hide();
                 $('#seiteGroup').show();
                 $('#seite').prop('required', true); // Markieren Sie das "Seite"-Feld als Pflichtfeld

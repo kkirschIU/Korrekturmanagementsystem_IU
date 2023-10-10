@@ -46,10 +46,15 @@
             </div>
     
             
-
             <div class="form-group">
                 <label for="comment">Kommentar:</label>
                 <input type="text" class="form-control" id="comment" name="comment" value="<%= fehler.comment %>" >
+            </div>
+
+            <div class="form-group">
+                <label for="assignee_id">Bearbeiter:</label>
+                <!--<input type="text" class="form-control" id="assignee_id" name="assignee_id" value="<%= fehler.assignee_id %>" readonly>-->
+                <input type="text" class="form-control" id="assignee_id" name="assignee_id" value="<%= fehler.assignee_name %>" readonly>
             </div>
 
             <div class="form-group">

@@ -6,20 +6,21 @@ const ejs = require('ejs');
 const session = require('express-session'); // Express-Session hinzufügen
 const path = require('path');
 const multer = require('multer');
-//const upload = multer({ dest: 'uploads/' }); // Hier wird der Speicherort für die Dateien festgelegt
+//const uploader = multer({ dest: 'uploads/' }); // Hier wird der Speicherort für die Dateien festgelegt
+const fs = require('fs');
+const directoryPath = './uploads';
 
-
-// Konfigurieren Sie Multer mit dem Zielordner
+// Konfigurieren Sie Multer für den Dateiupload
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads/') // Der Ordner, in dem die Dateien gespeichert werden sollen
-    },
-    filename: function (req, file, cb) {
-        cb(null, file.originalname) // Der Dateiname der gespeicherten Datei
+    destination: './uploads/', // Verzeichnis, in dem die Dateien gespeichert werden
+    filename: (req, file, cb) => {
+      cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
     }
-});
-
-const upload = multer({ storage: storage });
+  });
+  
+  const upload = multer({
+    storage: storage
+  });
 
 const app = express();
 const port = 3000;
@@ -28,7 +29,13 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views')); // Hier den relativen Pfad zur HTML-Datei angeben
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.locals.user;
+//app.use(express.static(__dirname + '/uploads'));
+
+//app.set('uploads', path.join(__dirname, 'uploads')); // Hier den relativen Pfad zur HTML-Datei angeben
+
 
 // Express-Session-Konfiguration
 app.use(session({
@@ -42,6 +49,14 @@ const connection = mysql.createConnection({
     user: 'root',
     password: '',
     database: 'report'
+});
+
+fs.access(directoryPath, fs.constants.F_OK, (err) => {
+    if (err) {
+        console.error(`Verzeichnis ${directoryPath} existiert nicht oder Sie haben keinen Zugriff.`);
+    } else {
+        console.log(`Verzeichnis ${directoryPath} existiert und Sie haben Zugriff.`);
+    }
 });
 
 connection.connect((err) => {
@@ -133,7 +148,7 @@ app.get('/report', (req, res) => {
     }
 });
 
-app.post('/report', upload.array('screenshots'), (req, res) => {
+app.post('/report', upload.single('screenshots'), (req, res) => {
     const modul = req.body.modul;
     const differentClass = req.body.class;
     const category = req.body.category;
@@ -141,7 +156,7 @@ app.post('/report', upload.array('screenshots'), (req, res) => {
     const minute = req.body.minute; 
     const site = req.body.seite; 
     const comment = req.body.comment; 
-    const screenshots = req.files; // Alle hochgeladenen Bilder
+    const screenshots = req.file; // Alle hochgeladenen Bilder
 
 
     // Das heutige Datum abrufen (YYYY-MM-DD)
@@ -163,19 +178,19 @@ app.post('/report', upload.array('screenshots'), (req, res) => {
             const reportId = result.insertId;
 
             // Hier müssen Sie eine Schleife verwenden, um alle hochgeladenen Bilder zu verarbeiten
-            req.files.forEach((screenshot) => {
-                const screenshotData = screenshot.buffer; // Die Binärdaten des Screenshots
-                const screenshotFileName = screenshot.originalname; // Der Dateiname des Screenshots
-                console.log(screenshotData);
+            
+                //const screenshotData = screenshots.buffer; // Die Binärdaten des Screenshots
+                const screenshotFileName = screenshots.filename; // Der Dateiname des Screenshots
+                //console.log(screenshotData);
 
                 // Fügen Sie die Screenshots in die Tabelle "screenshots" ein und verknüpfen Sie sie mit der Fehlermeldung
-                connection.query('INSERT INTO screenshots (report_id, screenshot_data, screenshot_filename) VALUES (?, ?, ?)', [reportId, screenshotData, screenshotFileName], (err) => {
+                connection.query('INSERT INTO screenshots (report_id, screenshot_filename) VALUES (?, ?)', [reportId, screenshotFileName], (err) => {
                     if (err) {
                         console.error(err);
                         res.status(500).send('Fehler beim Speichern des Screenshots');
                     }
                 });
-            });
+            
 
             res.redirect('/report?success');
         }
@@ -255,7 +270,7 @@ app.get('/bearbeiten/:id', (req, res) => {
                 const fehler = results[0];
 
                 // Hier holst du die Liste der Benutzer mit der Rolle "Bearbeiter" aus deiner Datenbank
-                connection.query('SELECT * FROM users WHERE role = "bearbeiter"', (err, bearbeiter) => {
+                connection.query('SELECT * FROM users WHERE role = "bearbeiter"', (err, bearbeiter) => {                 
                     if (err) {
                         console.error(err);
                         res.status(500).send('Fehler beim Abrufen der Bearbeiter');
@@ -276,17 +291,9 @@ app.get('/bearbeiten/:id', (req, res) => {
                                         res.status(500).send('Fehler beim Abrufen der Screenshots');
                                     } else {
                                         // Verarbeite die Screenshots, indem du sicherstellst, dass screenshotResult.screenshot_data nicht null ist
-                                        const screenshots = screenshotResults.map((screenshotResult) => {
-                                            if (screenshotResult.screenshot_data) {
-                                                return {
-                                                    base64Screenshot: screenshotResult.screenshot_data.toString('base64'),
-                                                    filename: screenshotResult.screenshot_filename
-                                                };
-                                            }
-                                            return null; // Wenn screenshot_data null ist, überspringe diesen Screenshot
-                                        }).filter((screenshot) => screenshot !== null);
-
+                                        const screenshots = screenshotResults.map((screenshotResult) => screenshotResult.screenshot_filename);
                                         // Rendere die "bearbeiten.ejs"-Seite und übergebe die Daten an die Vorlage
+                                        console.log(screenshots);
                                         res.render('bearbeiten', { fehler, bearbeiter, notifierUsername, screenshots });
                                     }
                                 });
@@ -305,7 +312,9 @@ app.get('/bearbeiten-melder/:id', (req, res) => {
     const fehlerId = req.params.id;
 
     // Hier holst du die Daten für den ausgewählten Fehler (fehlerId) aus deiner Datenbank
-    connection.query('SELECT * FROM reports WHERE id = ?', [fehlerId], (err, results) => {
+    //connection.query('SELECT * FROM reports WHERE id = ?', [fehlerId], (err, results) => {
+    connection.query('SELECT reports.*, users.username AS assignee_name FROM reports LEFT JOIN users ON reports.assignee_id = users.id WHERE reports.id = ?', [fehlerId], (err, results) => {
+        
         if (err) {
             console.error(err);
             res.status(500).send('Fehler beim Abrufen des Fehlers');
