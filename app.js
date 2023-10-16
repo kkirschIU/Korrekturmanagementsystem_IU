@@ -179,6 +179,8 @@ app.post('/report', upload.single('screenshots'), (req, res) => {
 
             // Hier müssen Sie eine Schleife verwenden, um alle hochgeladenen Bilder zu verarbeiten
             
+            if (req.file) {
+                const screenshots = req.file; // Alle hochgeladenen Bilder
                 //const screenshotData = screenshots.buffer; // Die Binärdaten des Screenshots
                 const screenshotFileName = screenshots.filename; // Der Dateiname des Screenshots
                 //console.log(screenshotData);
@@ -188,11 +190,17 @@ app.post('/report', upload.single('screenshots'), (req, res) => {
                     if (err) {
                         console.error(err);
                         res.status(500).send('Fehler beim Speichern des Screenshots');
+                    } else {
+                        res.redirect('/report?success');
                     }
                 });
+            } else {
+                // Keine Datei wurde hochgeladen, Sie können hier eine Meldung oder Umleitung hinzufügen
+                res.redirect('/report?success');
+            }
             
 
-            res.redirect('/report?success');
+            //res.redirect('/report?success');
         }
     });
 });
