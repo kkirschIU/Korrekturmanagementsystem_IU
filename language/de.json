@@ -1,7 +1,7 @@
 {
 	"title": "Melden",
 	"thankYou": "Vielen Dank!",
-	"successMessage": "Ihre Meldung wurde erfolgreich gespeichert. <a href='overview' class='alert-link'>Hier finden Sie eine Übersicht Ihrer Meldungen</a>.",
+	"successMessage": "Ihre Meldung wurde erfolgreich gespeichert.",
 	"moduleLabel": "Modul:",
 	"classLabel": "Klasse:",
 	"categoryLabel": "Kategorie:",

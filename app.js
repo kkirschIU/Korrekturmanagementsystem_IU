@@ -382,9 +382,10 @@ app.get('/bearbeiten-melder/:id', (req, res) => {
                     } else {
                         // Verarbeite die Screenshots, indem du sicherstellst, dass screenshotResult.screenshot_data nicht null ist
                         const screenshots = screenshotResults.map((screenshotResult) => {
-                            if (screenshotResult.screenshot_data) {
+                            //if (screenshotResult.screenshot_data) {
+                            if (screenshotResult.screenshot_filename) {
                                 return {
-                                    base64Screenshot: screenshotResult.screenshot_data.toString('base64'),
+                                    //base64Screenshot: screenshotResult.screenshot_data.toString('base64'),
                                     filename: screenshotResult.screenshot_filename
                                 };
                             }

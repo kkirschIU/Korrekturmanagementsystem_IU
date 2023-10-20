@@ -1,7 +1,7 @@
 {
 	"title": "Report",
 	"thankYou": "Thank you!",
-	"successMessage": "Your report has been successfully saved. <a href='overview' class='alert-link'>Here is an overview of your reports</a>.",
+	"successMessage": "Your report has been successfully saved.",
 	"moduleLabel": "Module:",
 	"classLabel": "Class:",
 	"categoryLabel": "Category:",
