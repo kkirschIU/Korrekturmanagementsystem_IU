@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bearbeiten</title>
+    <title><%= __("editTitle") %></title>
 
     <%- include('nav') %>
 
@@ -14,7 +14,7 @@
 <body>
     <div class="container mt-5">
 
-        <h1>Bearbeiten</h1>
+        <h1><%= __("editTitle") %></h1>
         <form action="/speichernBearbeitung/<%= fehler.id %>" method="POST">
             <div class="form-group">
                 <label for="modul">Modul:</label>
@@ -22,27 +22,27 @@
             </div>
 
             <div class="form-group">
-                <label for="category">Klasse:</label>
+                <label for="category"><%= __("classLabel") %></label>
                 <input type="text" class="form-control" id="class" name="class" value="<%= fehler.class %>" readonly>
             </div>
     
             <div class="form-group">
-                <label for="category">Kategorie:</label>
+                <label for="category"><%= __("categoryLabel") %></label>
                 <input type="text" class="form-control" id="category" name="category" value="<%= fehler.category %>" readonly>
             </div>
     
             <div class="form-group">
-                <label for="resource">Ressource:</label>
+                <label for="resource"><%= __("resourceLabel") %></label>
                 <input type="text" class="form-control" id="resource" name="resource" value="<%= fehler.resource %>" readonly>
             </div>
     
             <div class="form-group">
-                <label for="minute">Minute:</label>
+                <label for="minute"><%= __("minuteLabel") %></label>
                 <input type="text" class="form-control" id="minute" name="minute" value="<%= fehler.minute %>" readonly>
             </div>
     
             <div class="form-group">
-                <label for="seite">Seite:</label>
+                <label for="seite"><%= __("pageLabel") %></label>
                 <input type="text" class="form-control" id="seite" name="seite" value="<%= fehler.seite %>" readonly>
             </div>
     
@@ -81,7 +81,7 @@
 
 
             <div class="form-group">
-                <label for="comment">Kommentar:</label>
+                <label for="comment"><%= __("commentLabel") %></label>
                 <input type="text" class="form-control" id="comment" name="comment" value="<%= fehler.comment %>" readonly>
             </div>
 
@@ -96,7 +96,7 @@
             </div>
 
             <div class="form-group">
-                <label for="prio">Priorität:</label>
+                <label for="prio">Prio.</label>
                 <select class="form-control" id="prio" name="prio" required>
                     <option value="unkritisch" <%= fehler.prio === 'unkritisch' ? 'selected' : '' %>>unkritisch</option>
                     <option value="kritisch" <%= fehler.prio === 'kritisch' ? 'selected' : '' %>>kritisch</option>
@@ -109,7 +109,7 @@
             </div>
 
             <div class="form-group">
-                <label for="assignee_id">Zugewiesen an:</label>
+                <label for="assignee_id"><%= __("assignedToLabel") %></label>
                 <select class="form-control" id="assignee_id" name="assignee_id" required>
                     <option value="">Kein Bearbeiter</option>
                     <% bearbeiter.forEach(function(benutzer) { %>
@@ -120,23 +120,25 @@
             
     
             <div class="form-group">
-                <label for="notifier_id">Melder:</label>
+                <label for="notifier_id"><%= __("reportLabel") %></label>
                 <input type="text" class="form-control" id="notifier_id" name="notifier_id" value="<%= notifierUsername %>" readonly>
             </div>
 
             <div class="form-group">
-                <label for="message">Nachricht:</label>
+                <label for="message"><%= __("messageLabel") %>:</label>
                 <textarea class="form-control" id="message" name="message" rows="4"></textarea>
             </div>
 
             
 
-            <button type="submit" class="btn btn-primary">Änderungen speichern</button>
+            <button type="submit" class="btn btn-primary"><%= __("saveChangeLabel") %></button>
         </form>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Bootstrap JavaScript (Popper.js is included) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.5.2/dist/js/bootstrap.min.js"></script>
+    <script src="languageToggle.js"></script>
+
 </body>
 </html>

@@ -8,11 +8,14 @@ const path = require('path');
 const multer = require('multer');
 //const uploader = multer({ dest: 'uploads/' }); // Hier wird der Speicherort für die Dateien festgelegt
 const fs = require('fs');
-const directoryPath = './uploads';
+const directoryPath = './public/uploads/';
+const i18n = require('i18n');
+const cookieParser = require('cookie-parser');
+
 
 // Konfigurieren Sie Multer für den Dateiupload
 const storage = multer.diskStorage({
-    destination: './uploads/', // Verzeichnis, in dem die Dateien gespeichert werden
+    destination: './public/uploads/', // Verzeichnis, in dem die Dateien gespeichert werden
     filename: (req, file, cb) => {
       cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
     }
@@ -25,6 +28,16 @@ const storage = multer.diskStorage({
 const app = express();
 const port = 3000;
 
+i18n.configure({
+    locales: ['en', 'de'],  // Unterstützte Sprachen
+    defaultLocale: 'de',    // Standardsprache
+    directory: __dirname + '/language', // Verzeichnis mit den Übersetzungsdateien
+});
+
+app.use(i18n.init);
+
+
+
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views')); // Hier den relativen Pfad zur HTML-Datei angeben
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -32,6 +45,7 @@ app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.locals.user;
+app.use(cookieParser());
 //app.use(express.static(__dirname + '/uploads'));
 
 //app.set('uploads', path.join(__dirname, 'uploads')); // Hier den relativen Pfad zur HTML-Datei angeben
@@ -43,6 +57,31 @@ app.use(session({
     resave: false,
     saveUninitialized: true
 }));
+
+// Legt die Start-Sprache für die Sitzung fest (wenn keine gesetzt ist)
+app.use((req, res, next) => {
+       // Hier wird geprüft, ob ein 'locale'-Cookie im Request vorhanden ist.
+       const userLocale = req.cookies.locale;
+
+       // Standardmäßig wird 'de' verwendet, wenn kein 'locale'-Cookie gefunden wird.
+    const defaultLocale = 'de';
+
+    // Setze die ausgewählte Sprache basierend auf dem Cookie oder einer anderen Logik.
+    // Du kannst hier auch auf Benutzerpräferenzen oder den Benutzeragenten zugreifen.
+    if (userLocale) {
+        // Wenn das 'locale'-Cookie bereits gesetzt ist, lassen Sie es unverändert.
+        res.locals.locale = userLocale;
+    } else {
+        // Wenn kein 'locale'-Cookie vorhanden ist, setze es auf die Standardsprache.
+        res.locals.locale = defaultLocale;
+        // Du könntest es auch auf 'en' setzen, wenn 'de' nicht gefunden wurde.
+    }
+
+    // Setze die Sprache für die i18n-Bibliothek.
+    i18n.setLocale(req, res.locals.locale);
+   
+       next();
+  });
 
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -68,11 +107,16 @@ connection.connect((err) => {
 });
 
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/public/login.html');
+    // Prüfe, ob bereits ein Sprach-Cookie vorhanden ist, andernfalls verwende die Standardsprache 'en'.
+
+
+    res.render('login');
+    //res.sendFile(__dirname + '/public/login.ejs');
 });
 
 app.get('/login', (req, res) => {
-    res.sendFile(__dirname + '/public/login.html');
+    //res.sendFile(__dirname + '/public/login.ejs');
+    res.render('login');
 });
 
 app.post('/login', (req, res) => {
@@ -142,7 +186,7 @@ app.post('/register', (req, res) => {
 app.get('/report', (req, res) => {
     // Prüfen, ob der Benutzer eingeloggt ist
     if (req.session.user) {
-        res.render('report');
+        res.render('report', { locale: req.cookies.locale, translations: i18n.__mf });
     } else {
         res.redirect('/login');
     }
@@ -402,6 +446,22 @@ app.post('/speichernBearbeitung-melder/:id', (req, res) => {
             }
         }
     );
+});
+
+app.get('/setLanguage/:language', (req, res) => {
+    const language = req.params.language;
+
+    // Setze das "locale"-Cookie mit der ausgewählten Sprache
+    res.cookie('locale', language);
+
+    // Hier kannst du die aktuelle Sprache (Locale) abrufen
+    //const currentLocale = i18n.getLocale(req);
+    i18n.setLocale(req, language);
+       // Speichere die ausgewählte Sprache in der Sitzung
+    req.session.locale = language;
+
+    // Weiterleitung zur Startseite oder einer anderen Seite
+    res.redirect('/');
 });
 
 

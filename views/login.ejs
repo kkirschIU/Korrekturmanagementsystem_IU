@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center align-items-center min-vh-100">
+            <div class="col-md-6">
+                <button id="language-toggle" class="btn btn-primary float-right"><%= __("changeLanguageButton") %></button>
+                <h1>Login</h1>
+                <form action="/login" method="POST">
+                    <div class="form-group">
+                        <label for="username"><%= __("usernameLabel") %>:</label>
+                        <input type="text" class="form-control" id="username" name="username" required oninput="validateEmail()">
+                        <div id="emailError" style="color: red;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password"><%= __("passwordLabel") %>:</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="loginButton" disabled><%= __("loginButton") %></button>
+                </form>
+                <!--<p>Noch keinen Account? <a href="/register">Registrieren</a></p>-->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="languageToggle.js"></script>
+
+    <script>
+         function validateEmail() {
+            const emailInput = document.getElementById("username");
+            const emailError = document.getElementById("emailError");
+            const loginButton = document.getElementById("loginButton");
+            const email = emailInput.value;
+            const domainToCheck = "iubh-fernstudium.de"; // Die zu überprüfende Domäne
+
+            if (email.endsWith(domainToCheck)) {
+                // E-Mail-Adresse ist gültig
+                emailError.innerText = "";
+                loginButton.disabled = false;
+            } else {
+                // E-Mail-Adresse ist ungültig
+                emailError.innerText = "Die E-Mail-Adresse muss mit 'iubh-fernstudium.de' enden.";
+                loginButton.disabled = true;
+            }
+        }
+    </script>
+
+</body>
+</html>

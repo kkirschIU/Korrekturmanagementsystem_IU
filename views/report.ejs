@@ -1,29 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= locale || 'en' %>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Melden</title>
-    
+    <title><%= __("title") %></title>
+
     <%- include('nav') %>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="style.css">
-
 </head>
 <body>
-    <div class="alert alert-success" role="alert" id="successAlert" style="display: none;">        
-        <h4 class="alert-heading">Danke!</h4>
-        <p>Deine Meldung wurde erfolgreich gespeichert. <a href="overview" class="alert-link">Hier findest du eine Übersicht deiner Meldungen</a>.</p>
+    <div class="alert alert-success" role="alert" id="successAlert" style="display: none;">
+        <h4 class="alert-heading"><%= __("thankYou") %></h4>
+        <p><%= __("successMessage") %></p>
     </div>
-      
+
     <div class="container">
+        <button id="language-toggle" class="btn btn-primary float-right"><%= __("changeLanguageButton") %></button>
+
         <div class="row justify-content-center">
             <div class="col-md-6">
-                <h1 class="text-center">Melden</h1>
+                <h1><%= __("title") %></h1>
                 <form action="/report" method="POST" id="report-form" enctype="multipart/form-data" onsubmit="showSuccessMessage()">
                     <div class="form-group">
-                        <label for="modul">Modul:</label>
+                        <label for="modul"><%= __("moduleLabel") %></label>
                         <select class="form-control" id="modul" name="modul" required>
                             <option value="ISEF01">ISEF01</option>
                             <option value="IREN01">IREN01</option>
@@ -32,59 +33,59 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="class">Klasse:</label>
+                        <label for="class"><%= __("classLabel") %></label>
                         <select class="form-control" id="class" name="class" required>
-                            <option value="Fehler">Fehler</option>
-                            <option value="Verbesserung">Verbesserung</option>
-                            <option value="Erweiterung">Erweiterung</option>
+                            <option value="Error"><%= __("Error") %></option>
+                            <option value="Improvement"><%= __("Improvement") %></option>
+                            <option value="Expansion"><%= __("Expansion") %></option>
                         </select>
+                        
                     </div>
 
                     <div class="form-group">
-                        <label for="category">Kategorie:</label>
+                        <label for="category"><%= __("categoryLabel") %></label>
                         <select class="form-control" id="category" name="category" required>
-                            <option value="inhaltlich">inhaltlich</option>
-                            <option value="sprachlich">sprachlich</option>
-                            <option value="technisch">technische</option>
+                            <option value="inhaltlich"><%= __("Content-related") %></option>
+                            <option value="sprachlich"><%= __("Linguistic") %></option>
+                            <option value="technisch"><%= __("Technical") %></option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="resource">Ressource:</label>
+                        <label for="resource"><%= __("resourceLabel") %></label>
                         <select class="form-control" id="resource" name="resource" required>
-                            <option value="Script">Script</option>
-                            <option value="Interactive Script">Interactive Script</option>
-                            <option value="Musterklausur">Musterklausur</option>
-                            <option value="Online Test">Online Test</option>
-                            <option value="Präsentation">Präsentation</option>
-                            <option value="Vodcast">Vodcast</option>
-                            <option value="Podcast">Podcast</option>
-                            <option value="Library Service">Library Service</option>
-                        </select>
+                            <option value="Script"><%= __("Script") %></option>
+                            <option value="Interactive Script"><%= __("Interactive Script") %></option>
+                            <option value="Sample Exam"><%= __("Sample-Exam") %></option>
+                            <option value="Online Test"><%= __("Online-Test") %></option>
+                            <option value="Presentation"><%= __("Presentation") %></option>
+                            <option value="Vodcast"><%= __("Vodcast") %></option>
+                            <option value="Podcast"><%= __("Podcast") %></option>
+                            <option value="Library Service"><%= __("Library Service") %></option>
+                        </select>                        
                     </div>
 
                     <div class="form-group" id="minuteGroup">
-                        <label for="minute">Minute:</label>
+                        <label for="minute"><%= __("minuteLabel") %></label>
                         <input type="number" class="form-control" id="minute" name="minute">
                     </div>
-                    
+
                     <div class="form-group" id="seiteGroup">
-                        <label for="seite">Seite:</label>
+                        <label for="seite"><%= __("pageLabel") %></label>
                         <input type="number" class="form-control" id="seite" name="seite">
                     </div>
-                    
 
                     <div class="form-group">
-                        <label for="screenshot">Screenshot:</label>
+                        <label for="screenshot"><%= __("screenshotLabel") %></label>
                         <input type="file" class="form-control-file" id="screenshot" name="screenshots">
                     </div>
 
                     <div class="form-group">
-                        <label for="comment">Kommentar:</label>
+                        <label for="comment"><%= __("commentLabel") %></label>
                         <textarea class="form-control" id="comment" name="comment" rows="4" maxlength="255" required></textarea>
                     </div>
 
-                    <button type="submit" class="btn btn-custom btn-block">Fehler melden</button>
+                    <button type="submit" class="btn btn-custom btn-block"><%= __("reportButton") %></button>
                 </form>
             </div>
         </div>
@@ -92,8 +93,72 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+    <script src="languageToggle.js"></script>
+
     <script>
+        
         $(document).ready(function() {
+            
+            //language
+            /*$('.changeLanguageButton').click(function() {
+                // Extrahiere die ausgewählte Sprache aus dem data-language-Attribut
+                const language = $(this).data('language');
+                // Führe einen Ajax-Aufruf aus, um die Sprache zu ändern
+                $.ajax({
+                    type: 'GET',
+                    url: '/setLanguage/' + language, // Die Serverroute zum Ändern der Sprache
+                    success: function(response) {
+                        // Aktualisiere die Seite, nachdem die Sprache geändert wurde
+                        location.reload();
+                    }
+                });
+            });*/
+            // Funktion zum Abrufen des Cookie-Werts anhand des Cookie-Namens
+            /*
+       function getCookie(name) {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith(name + '=')) {
+                    return cookie.substring(name.length + 1);
+                }
+            }
+            return null;
+        }
+
+        function setCookie(name, value, days) {
+            const expirationDate = new Date();
+            expirationDate.setDate(expirationDate.getDate() + days);
+            const cookieValue = `${name}=${value}; expires=${expirationDate.toUTCString()}`;
+            document.cookie = cookieValue;
+        }
+
+        document.getElementById("language-toggle").addEventListener("click", function () {
+             // Hier kannst du die Sprache umschalten
+            const userLocale = getCookie('locale');
+            let newLocale;
+
+            if (userLocale === 'de') {
+                newLocale = 'en';
+            } else {
+                newLocale = 'de';
+            }
+
+            // Konsolenausgabe für Debugging
+            console.log('User Locale:', userLocale);
+
+            // Sende ein AJAX-Anfrage, um die Spracheinstellung auf dem Server zu ändern
+            $.ajax({
+                type: 'GET',
+                url: '/setLanguage/' + newLocale,
+                success: function (response) {
+                    // Die AJAX-Anfrage war erfolgreich, ändere die Anzeige gemäß der ausgewählten Sprache
+                    location.reload();
+                }
+            });
+        });
+*/
+        
             // Überprüfen, ob die URL den Parameter "success" enthält
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('success')) {

@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mir zugewiesene Meldungen</title>
+    <title><%= __("assignedTitle") %></title>
 
     <%- include('nav') %>
 
@@ -15,22 +15,23 @@
 </head>
 <body>
     <div class="container mt-5">
-    <h1>Mir zugewiesene Meldungen</h1>
+        <button id="language-toggle" class="btn btn-primary float-right"><%= __("changeLanguageButton") %></button>
+    <h1><%= __("assignedTitle") %></h1>
     <table id="mirZugewieseneFehler" class="table table-bordered table-striped">
         <thead class="thead-dark">
             <tr>
                 <th>ID</th>
                 <th>Modul</th>
-                <th>Klasse</th>
-                <th>Kategorie</th>
-                <th>Resource</th>
-                <th>Minute</th>
-                <th>Seite</th>
+                <th><%= __("classLabel") %></th>
+                <th><%= __("categoryLabel") %></th>
+                <th><%= __("resourceLabel") %></th>
+                <th><%= __("minuteLabel") %></th>
+                <th><%= __("pageLabel") %></th>
                 <th>Status</th>
                 <th>Prio</th>
-                <th>Datum</th>
+                <th><%= __("dateLabel") %></th>
 
-                <th>Bearbeiten</th>
+                <th><%= __("editLabel") %></th>
             </tr>
         </thead>
         <tbody>
@@ -47,7 +48,7 @@
                     <td><%= fehler.prio %></td>
                     <td><%= new Date(fehler.date).toLocaleDateString('de-DE') %></td>
                     <td>                
-                        <a href="/bearbeiten/<%= fehler.id %>">Bearbeiten</a>
+                        <a href="/bearbeiten/<%= fehler.id %>"><%= __("editLabel") %></a>
                     </td>
                 </tr>
             <% }); %>
@@ -58,6 +59,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery -->
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script> <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
+    <script src="languageToggle.js"></script>
 
 
     <script>
