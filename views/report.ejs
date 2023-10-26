@@ -37,9 +37,9 @@
                     <div class="form-group">
                         <label for="class"><%= __("classLabel") %></label>
                         <select class="form-control" id="class" name="class" required>
-                            <option value="Error"><%= __("Error") %></option>
-                            <option value="Improvement"><%= __("Improvement") %></option>
-                            <option value="Expansion"><%= __("Expansion") %></option>
+                            <option value="Fehler"><%= __("Error") %></option>
+                            <option value="Verbesserung"><%= __("Improvement") %></option>
+                            <option value="Erweiterung"><%= __("Expansion") %></option>
                         </select>
                         
                     </div>
@@ -47,20 +47,20 @@
                     <div class="form-group">
                         <label for="category"><%= __("categoryLabel") %></label>
                         <select class="form-control" id="category" name="category" required>
-                            <option value="inhaltlich"><%= __("Content-related") %></option>
-                            <option value="sprachlich"><%= __("Linguistic") %></option>
-                            <option value="technisch"><%= __("Technical") %></option>
+                            <option value="Inhaltlich"><%= __("Content-related") %></option>
+                            <option value="Sprachlich"><%= __("Linguistic") %></option>
+                            <option value="Technisch"><%= __("Technical") %></option>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label for="resource"><%= __("resourceLabel") %></label>
                         <select class="form-control" id="resource" name="resource" required>
-                            <option value="Script"><%= __("Script") %></option>
-                            <option value="Interactive Script"><%= __("Interactive Script") %></option>
-                            <option value="Sample Exam"><%= __("Sample-Exam") %></option>
+                            <option value="Skript"><%= __("Script") %></option>
+                            <option value="Interactive Skript"><%= __("Interactive Script") %></option>
+                            <option value="Musterklausur"><%= __("Sample-Exam") %></option>
                             <option value="Online Test"><%= __("Online-Test") %></option>
-                            <option value="Presentation"><%= __("Presentation") %></option>
+                            <option value="Präsentation"><%= __("Presentation") %></option>
                             <option value="Vodcast"><%= __("Vodcast") %></option>
                             <option value="Podcast"><%= __("Podcast") %></option>
                             <option value="Library Service"><%= __("Library Service") %></option>
@@ -100,67 +100,7 @@
     <script>
         
         $(document).ready(function() {
-            
-            //language
-            /*$('.changeLanguageButton').click(function() {
-                // Extrahiere die ausgewählte Sprache aus dem data-language-Attribut
-                const language = $(this).data('language');
-                // Führe einen Ajax-Aufruf aus, um die Sprache zu ändern
-                $.ajax({
-                    type: 'GET',
-                    url: '/setLanguage/' + language, // Die Serverroute zum Ändern der Sprache
-                    success: function(response) {
-                        // Aktualisiere die Seite, nachdem die Sprache geändert wurde
-                        location.reload();
-                    }
-                });
-            });*/
-            // Funktion zum Abrufen des Cookie-Werts anhand des Cookie-Namens
-            /*
-       function getCookie(name) {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.startsWith(name + '=')) {
-                    return cookie.substring(name.length + 1);
-                }
-            }
-            return null;
-        }
-
-        function setCookie(name, value, days) {
-            const expirationDate = new Date();
-            expirationDate.setDate(expirationDate.getDate() + days);
-            const cookieValue = `${name}=${value}; expires=${expirationDate.toUTCString()}`;
-            document.cookie = cookieValue;
-        }
-
-        document.getElementById("language-toggle").addEventListener("click", function () {
-             // Hier kannst du die Sprache umschalten
-            const userLocale = getCookie('locale');
-            let newLocale;
-
-            if (userLocale === 'de') {
-                newLocale = 'en';
-            } else {
-                newLocale = 'de';
-            }
-
-            // Konsolenausgabe für Debugging
-            console.log('User Locale:', userLocale);
-
-            // Sende ein AJAX-Anfrage, um die Spracheinstellung auf dem Server zu ändern
-            $.ajax({
-                type: 'GET',
-                url: '/setLanguage/' + newLocale,
-                success: function (response) {
-                    // Die AJAX-Anfrage war erfolgreich, ändere die Anzeige gemäß der ausgewählten Sprache
-                    location.reload();
-                }
-            });
-        });
-*/
-        
+               
             // Überprüfen, ob die URL den Parameter "success" enthält
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('success')) {
@@ -184,7 +124,7 @@
                 $('#seite').prop('required', false); // "Seite"-Feld nicht als Pflichtfeld markieren
                 // Löschen Sie den Inhalt des "Seite"-Feldes
                 $('#seite').val('');
-            }else if (selectedResource === 'Script' || selectedResource === 'Interactive Script' || selectedResource === 'Musterklausur' || selectedResource === 'Online Test' || selectedResource === 'Präsentation') {
+            }else if (selectedResource === 'Skript' || selectedResource === 'Interactive Script' || selectedResource === 'Musterklausur' || selectedResource === 'Online Test' || selectedResource === 'Präsentation') {
                 $('#minuteGroup').hide();
                 $('#seiteGroup').show();
                 $('#seite').prop('required', true); // Markieren Sie das "Seite"-Feld als Pflichtfeld

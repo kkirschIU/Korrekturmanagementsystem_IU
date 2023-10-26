@@ -10,7 +10,7 @@
 	"pageLabel": "Seite:",
 	"screenshotLabel": "Screenshot:",
 	"commentLabel": "Kommentar:",
-	"reportButton": "Fehler melden",
+	"reportButton": "Meldung erstellen",
 	"changeLanguageButton": "English",
 	"Error": "Fehler",
 	"Improvement": "Verbesserung",
@@ -40,5 +40,10 @@
 	"assignedToLabel": "Zugewiesen an",
 	"reportLabel": "Melder",
 	"messageLabel": "Nachricht",
-	"saveChangeLabel": "Änderungen speichern"
+	"saveChangeLabel": "Änderungen speichern",
+	"messageUnclear": "Meldung unklar - bitte bearbeiten",
+	"navTitleReport": "Melden",
+	"navTitleMyReports": "Meine Meldungen",
+	"navTitleAssignedReports": "Zugewiesene Meldungen",
+	"navTitleAllReports": "Alle Meldunge"
 }

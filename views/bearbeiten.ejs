@@ -43,7 +43,7 @@
     
             <div class="form-group">
                 <label for="seite"><%= __("pageLabel") %></label>
-                <input type="text" class="form-control" id="seite" name="seite" value="<%= fehler.seite %>" readonly>
+                <input type="text" class="form-control" id="seite" name="seite" value="<%= fehler.site %>" readonly>
             </div>
     
             <div class="form-group">
@@ -92,6 +92,7 @@
                     <option value="in Bearbeitung" <%= fehler.status === 'in Bearbeitung' ? 'selected' : '' %>>In Bearbeitung</option>
                     <option value="Abgeschlossen" <%= fehler.status === 'Abgeschlossen' ? 'selected' : '' %>>Abgeschlossen</option>
                     <option value="unklar" <%= fehler.status === 'unklar' ? 'selected' : '' %>>unklar</option>
+                    <option value="Abgelehnt" <%= fehler.status === 'Abgelehnt' ? 'selected' : '' %>>Abgelehnt</option>
                 </select>
             </div>
 

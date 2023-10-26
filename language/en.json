@@ -41,5 +41,9 @@
 	"reportLabel": "Report from",
 	"messageLabel": "Message",
 	"saveChangeLabel": "Save changes",
-	"messageUnclear": "Report unclear - Please edit"
+	"messageUnclear": "Report unclear - Please edit",
+	"navTitleReport": "Report",
+	"navTitleMyReports": "My Reports",
+	"navTitleAssignedReports": "Assigned Reports",
+	"navTitleAllReports": "All Reports"
 }

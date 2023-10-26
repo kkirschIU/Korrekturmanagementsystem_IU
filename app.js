@@ -26,7 +26,7 @@ const storage = multer.diskStorage({
   });
 
 const app = express();
-const port = 3000;
+const port = 3001;
 
 i18n.configure({
     locales: ['en', 'de'],  // Unterstützte Sprachen

@@ -18,7 +18,7 @@
                 <h1><%= __("overviewTitle") %></h1>
             </div>
             <div class="col-auto">
-                <a href="/report" class="btn btn-primary">Meldung senden</a>
+                <a href="/report" class="btn btn-primary"><%= __("reportButton") %></a>
             </div>
             <div class="col-auto">
                 <button id="language-toggle" class="btn btn-primary float-right"><%= __("changeLanguageButton") %></button>
@@ -55,7 +55,7 @@
                         <td><%= fehler.comment %></td>
                         <td><%= new Date(fehler.date).toLocaleDateString('de-DE') %></td>
                         <td>
-                            <% if (fehler.status === "unklar") { %>
+                            <% if (fehler.status === "unklar" || fehler.status === "Abgelehnt") { %>
                                 <a href="/bearbeiten-melder/<%= fehler.id %>" class="btn btn-warning"><%= __("editLabel") %></a>
                             <% } %>
                         </td>

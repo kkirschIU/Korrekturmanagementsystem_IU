@@ -11,65 +11,178 @@
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-    <div class="container mt-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
 
-        <h1><%= __("messageUnclear") %></h1>
-        <form action="/speichernBearbeitung-melder/<%= fehler.id %>" method="POST">
-            <div class="form-group">
-                <label for="modul">Modul:</label>
-                <input type="text" class="form-control" id="modul" name="modul" value="<%= fehler.modul %>" readonly>
-            </div>
+                <h1><%= __("messageUnclear") %></h1>
+                <form action="/speichernBearbeitung-melder/<%= fehler.id %>" method="POST">
+                    <!--
+                    <div class="form-group">
+                        <label for="modul">Modul:</label>
+                        <input type="text" class="form-control" id="modul" name="modul" value="<%= fehler.modul %>" readonly>
+                    </div>
 
-            <div class="form-group">
-                <label for="category"><%= __("classLabel") %></label>
-                <input type="text" class="form-control" id="class" name="class" value="<%= fehler.class %>" >
-            </div>
-    
-            <div class="form-group">
-                <label for="category"><%= __("categoryLabel") %></label>
-                <input type="text" class="form-control" id="category" name="category" value="<%= fehler.category %>" >
-            </div>
-    
-            <div class="form-group">
-                <label for="resource"><%= __("resourceLabel") %></label>
-                <input type="text" class="form-control" id="resource" name="resource" value="<%= fehler.resource %>" >
-            </div>
-    
-            <div class="form-group">
-                <label for="minute"><%= __("minuteLabel") %></label>
-                <input type="text" class="form-control" id="minute" name="minute" value="<%= fehler.minute %>">
-            </div>
-    
-            <div class="form-group">
-                <label for="seite"><%= __("pageLabel") %></label>
-                <input type="text" class="form-control" id="seite" name="seite" value="<%= fehler.seite %>">
-            </div>
-    
+                    <div class="form-group">
+                        <label for="category"><%= __("classLabel") %></label>
+                        <input type="text" class="form-control" id="class" name="class" value="<%= fehler.class %>" >
+                    </div>
             
-            <div class="form-group">
-                <label for="comment"><%= __("commentLabel") %></label>
-                <input type="text" class="form-control" id="comment" name="comment" value="<%= fehler.comment %>" >
+                    <div class="form-group">
+                        <label for="category"><%= __("categoryLabel") %></label>
+                        <input type="text" class="form-control" id="category" name="category" value="<%= fehler.category %>" >
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="resource"><%= __("resourceLabel") %></label>
+                        <input type="text" class="form-control" id="resource" name="resource" value="<%= fehler.resource %>" >
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="minute"><%= __("minuteLabel") %></label>
+                        <input type="text" class="form-control" id="minute" name="minute" value="<%= fehler.minute %>">
+                    </div>
+            
+                    <div class="form-group">
+                        <label for="seite"><%= __("pageLabel") %></label>
+                        <input type="text" class="form-control" id="seite" name="seite" value="<%= fehler.seite %>">
+                    </div>
+            
+                    
+                    <div class="form-group">
+                        <label for="comment"><%= __("commentLabel") %></label>
+                        <input type="text" class="form-control" id="comment" name="comment" value="<%= fehler.comment %>" >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="assignee_id"><%= __("assignedToLabel") %></label>
+                        <input type="text" class="form-control" id="assignee_id" name="assignee_id" value="<%= fehler.assignee_name %>" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id">ID:</label>
+                        <input type="text" class="form-control" id="id" name="id" value="<%= fehler.id %>" readonly>
+                    </div>-->
+
+
+
+
+                    <!--Neues Formular-->
+                    <div class="form-group">
+                        <label for="modul">Modul:</label>
+                        <input type="text" class="form-control" id="modul" name="modul" value="<%= fehler.modul %>" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="class"><%= __("classLabel") %></label>
+                        <select class="form-control" id="class" name="class" required>
+                            <option value="Fehler" <%= fehler.class === 'Fehler' ? 'selected' : '' %>><%= __("Error") %>  </option>
+                            <option value="Verbesserung" <%= fehler.class === 'Verbesserung' ? 'selected' : '' %>><%= __("Improvement") %>  </option>
+                            <option value="Erweiterung" <%= fehler.class === 'Erweiterung' ? 'selected' : '' %>><%= __("Expansion") %>  </option>
+                        </select>
+                        
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category"><%= __("categoryLabel") %></label>
+                        <select class="form-control" id="category" name="category" required>
+                            <option value="Inhaltlich" <%= fehler.category === 'Inhaltlich' ? 'selected' : '' %>><%= __("Content-related") %> </option>
+                            <option value="Sprachlich" <%= fehler.category === 'Sprachlich' ? 'selected' : '' %>><%= __("Linguistic") %> </option>
+                            <option value="Technisch" <%= fehler.category === 'Technisch' ? 'selected' : '' %>><%= __("Technical") %> </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="resource"><%= __("resourceLabel") %></label>
+                        <select class="form-control" id="resource" name="resource" required>
+                            <option value="Skript" <%= fehler.ressource === 'Skript' ? 'selected' : '' %>><%= __("Script") %> </option>
+                            <option value="Interactive Skript" <%= fehler.ressource === 'Interactive Skript' ? 'selected' : '' %>><%= __("Interactive Script") %> </option>
+                            <option value="Musterklausur" <%= fehler.ressource === 'Musterklausur' ? 'selected' : '' %>><%= __("Sample-Exam") %> </option>
+                            <option value="Online Test" <%= fehler.ressource === 'Online Test' ? 'selected' : '' %>><%= __("Online-Test") %> </option>
+                            <option value="Präsentation" <%= fehler.ressource === 'Präsentation' ? 'selected' : '' %>><%= __("Presentation") %> </option>
+                            <option value="Vodcast" <%= fehler.ressource === 'Vodcast' ? 'selected' : '' %>><%= __("Vodcast") %> </option>
+                            <option value="Podcast" <%= fehler.ressource === 'Podcast' ? 'selected' : '' %>><%= __("Podcast") %> </option>
+                            <option value="Library Service" <%= fehler.ressource === 'Library Service' ? 'selected' : '' %>><%= __("Library Service") %> </option>
+                        </select>                        
+                    </div>
+
+                    <div class="form-group" id="minuteGroup">
+                        <label for="minute"><%= __("minuteLabel") %></label>
+                        <input type="number" class="form-control" id="minute" name="minute" value="<%= fehler.minute %>">
+                    </div>
+
+                    <div class="form-group" id="seiteGroup">
+                        <label for="seite"><%= __("pageLabel") %></label>
+                        <input type="number" class="form-control" id="seite" name="seite" value="<%= fehler.site %>">
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="comment"><%= __("commentLabel") %></label>
+                        <textarea class="form-control" id="comment" name="comment" rows="4" maxlength="255" required><%= fehler.comment %></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="assignee_id"><%= __("assignedToLabel") %></label>
+                        <!--<input type="text" class="form-control" id="assignee_id" name="assignee_id" value="<%= fehler.assignee_id %>" readonly>-->
+                        <input type="text" class="form-control" id="assignee_id" name="assignee_id" value="<%= fehler.assignee_name %>" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id">ID:</label>
+                        <input type="text" class="form-control" id="id" name="id" value="<%= fehler.id %>" readonly>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary"><%= __("saveChangeLabel") %></button>
+                </form>
             </div>
-
-            <div class="form-group">
-                <label for="assignee_id"><%= __("assignedToLabel") %></label>
-                <!--<input type="text" class="form-control" id="assignee_id" name="assignee_id" value="<%= fehler.assignee_id %>" readonly>-->
-                <input type="text" class="form-control" id="assignee_id" name="assignee_id" value="<%= fehler.assignee_name %>" readonly>
-            </div>
-
-            <div class="form-group">
-                <label for="id">ID:</label>
-                <input type="text" class="form-control" id="id" name="id" value="<%= fehler.id %>" readonly>
-            </div>
-
-           
-
-            <button type="submit" class="btn btn-primary"><%= __("saveChangeLabel") %></button>
-        </form>
+        </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="languageToggle.js"></script>
+    <script>
+        
+        $(document).ready(function() {
+               
+            // Überprüfen, ob die URL den Parameter "success" enthält
 
+            // Zeigen Sie die relevanten Felder beim Laden der Seite basierend auf der anfänglichen Auswahl an
+            toggleFields();
+
+            // Überwachen Sie Änderungen am Dropdown "Ressource"
+            $('#resource').on('change', function() {
+                toggleFields();
+            });
+
+            function toggleFields() {
+            const selectedResource = $('#resource').val();
+            if (selectedResource === 'Vodcast' || selectedResource === 'Podcast') {
+                $('#minuteGroup').show();
+                $('#seiteGroup').hide();
+                $('#minute').prop('required', true); // Markieren Sie das "Minute"-Feld als Pflichtfeld
+                $('#seite').prop('required', false); // "Seite"-Feld nicht als Pflichtfeld markieren
+                // Löschen Sie den Inhalt des "Seite"-Feldes
+                $('#seite').val('');
+            }else if (selectedResource === 'Skript' || selectedResource === 'Interactive Script' || selectedResource === 'Musterklausur' || selectedResource === 'Online Test' || selectedResource === 'Präsentation') {
+                $('#minuteGroup').hide();
+                $('#seiteGroup').show();
+                $('#seite').prop('required', true); // Markieren Sie das "Seite"-Feld als Pflichtfeld
+                $('#minute').prop('required', false); // "Minute"-Feld nicht als Pflichtfeld markieren
+                // Löschen Sie den Inhalt des "Minute"-Feldes
+                $('#minute').val('');
+            } else {
+                // Verstecken Sie beide Felder, wenn keine gültige Auswahl getroffen wurde
+                $('#minuteGroup').hide();
+                $('#seiteGroup').hide();
+                $('#minute').prop('required', false); // Beide Felder nicht als Pflichtfelder markieren
+                $('#seite').prop('required', false);
+                // Löschen Sie den Inhalt beider Felder
+                $('#minute').val('');
+                $('#seite').val('');
+            }
+        }
+        });
+    </script>
 </body>
 </html>
