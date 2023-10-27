@@ -83,12 +83,37 @@ app.use((req, res, next) => {
        next();
   });
 
-const connection = mysql.createConnection({
+  const pool = mysql.createPool({
+    connectionLimit: 10, // Anzahl der Verbindungen im Pool
     host: 'localhost',
     user: 'root',
     password: '',
     database: 'report'
 });
+
+pool.getConnection((err, connection) => {
+    if (err) {
+      console.error('Fehler beim Abrufen der Verbindung aus dem Pool:', err);
+      return;
+    }
+  });
+
+/*
+const connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'report',
+    keepAlive: true
+});
+
+connection.connect((err) => {
+    if (err) {
+        console.error('Fehler bei der Verbindung zur MySQL-Datenbank:', err);
+    } else {
+        console.log('Erfolgreich zur MySQL-Datenbank verbunden');
+    }
+});*/
 
 fs.access(directoryPath, fs.constants.F_OK, (err) => {
     if (err) {
@@ -98,13 +123,7 @@ fs.access(directoryPath, fs.constants.F_OK, (err) => {
     }
 });
 
-connection.connect((err) => {
-    if (err) {
-        console.error('Fehler bei der Verbindung zur MySQL-Datenbank:', err);
-    } else {
-        console.log('Erfolgreich zur MySQL-Datenbank verbunden');
-    }
-});
+
 
 app.get('/', (req, res) => {
     // Prüfe, ob bereits ein Sprach-Cookie vorhanden ist, andernfalls verwende die Standardsprache 'en'.
@@ -123,6 +142,13 @@ app.post('/login', (req, res) => {
     // Benutzer authentifizieren und Session erstellen, wenn erfolgreich
     const username = req.body.username;
     const password = req.body.password;
+
+    pool.getConnection((err, connection) => {
+        if (err) {
+            console.error('Fehler beim Abrufen der Verbindung aus dem Pool:', err);
+            res.status(500).send('Fehler bei der Anmeldung');
+            return;
+        }
 
     connection.query('SELECT * FROM users WHERE username = ?', [username], (err, results) => {
         if (err) {
@@ -154,7 +180,9 @@ app.post('/login', (req, res) => {
             } else {
                 res.status(404).send('Benutzer nicht gefunden');
             }
-        }
+            connection.release();
+            }
+        });
     });
 });
 
@@ -166,21 +194,32 @@ app.post('/register', (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
-    bcrypt.hash(password, 10, (err, hash) => {
+    pool.getConnection((err, connection) => {
         if (err) {
-            console.error(err);
-            res.status(500).send('Fehler bei der Passwortverschlüsselung');
-        } else {
-            connection.query('INSERT INTO users (username, password) VALUES (?, ?)', [username, hash], (err) => {
-                if (err) {
-                    console.error(err);
-                    res.status(500).send('Fehler bei der Registrierung');
-                } else {
-                    res.redirect('/login?success=true');
-                }
-            });
+            console.error('Fehler beim Abrufen der Verbindung aus dem Pool:', err);
+            res.status(500).send('Fehler bei der Anmeldung');
+            return;
         }
-    });
+
+        bcrypt.hash(password, 10, (err, hash) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send('Fehler bei der Passwortverschlüsselung');
+            } else {
+                connection.query('INSERT INTO users (username, password) VALUES (?, ?)', [username, hash], (err) => {
+                    if (err) {
+                        console.error(err);
+                        res.status(500).send('Fehler bei der Registrierung');
+                    } else {
+                        res.redirect('/login?success=true');
+                    }
+                });
+            }
+        });
+
+    connection.release();
+            
+        });
 });
 
 app.get('/report', (req, res) => {
@@ -212,58 +251,85 @@ app.post('/report', upload.single('screenshots'), (req, res) => {
     // Ermittle die Melder-ID aus der Session des eingeloggten Benutzers
     const notifier_id = req.session.user.id;
 
-    // Hier fügen Sie die Fehlermeldung in "reports" ein
-    connection.query('INSERT INTO reports (modul, class, category, status, date, assignee_id, notifier_id, resource, minute, site, comment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [modul, differentClass, category, status, heute, null, notifier_id, resource, minute, site, comment], (err, result) => {
+    pool.getConnection((err, connection) => {
         if (err) {
-            console.error(err);
-            res.status(500).send('Fehler beim Speichern der Fehlermeldung');
-        } else {
-            // Die ID der gerade eingefügten Fehlermeldung abrufen
-            const reportId = result.insertId;
-
-            // Hier müssen Sie eine Schleife verwenden, um alle hochgeladenen Bilder zu verarbeiten
-            
-            if (req.file) {
-                const screenshots = req.file; // Alle hochgeladenen Bilder
-                //const screenshotData = screenshots.buffer; // Die Binärdaten des Screenshots
-                const screenshotFileName = screenshots.filename; // Der Dateiname des Screenshots
-                //console.log(screenshotData);
-
-                // Fügen Sie die Screenshots in die Tabelle "screenshots" ein und verknüpfen Sie sie mit der Fehlermeldung
-                connection.query('INSERT INTO screenshots (report_id, screenshot_filename) VALUES (?, ?)', [reportId, screenshotFileName], (err) => {
-                    if (err) {
-                        console.error(err);
-                        res.status(500).send('Fehler beim Speichern des Screenshots');
-                    } else {
-                        res.redirect('/report?success');
-                    }
-                });
-            } else {
-                // Keine Datei wurde hochgeladen, Sie können hier eine Meldung oder Umleitung hinzufügen
-                res.redirect('/report?success');
-            }
-            
-
-            //res.redirect('/report?success');
+            console.error('Fehler beim Abrufen der Verbindung aus dem Pool:', err);
+            res.status(500).send('Fehler bei der Anmeldung');
+            return;
         }
-    });
+
+        // Hier fügen Sie die Fehlermeldung in "reports" ein
+        connection.query('INSERT INTO reports (modul, class, category, status, date, assignee_id, notifier_id, resource, minute, site, comment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [modul, differentClass, category, status, heute, null, notifier_id, resource, minute, site, comment], (err, result) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send('Fehler beim Speichern der Fehlermeldung');
+            } else {
+                // Die ID der gerade eingefügten Fehlermeldung abrufen
+                const reportId = result.insertId;
+
+                // Hier müssen Sie eine Schleife verwenden, um alle hochgeladenen Bilder zu verarbeiten
+                
+                if (req.file) {
+                    const screenshots = req.file; // Alle hochgeladenen Bilder
+                    //const screenshotData = screenshots.buffer; // Die Binärdaten des Screenshots
+                    const screenshotFileName = screenshots.filename; // Der Dateiname des Screenshots
+                    //console.log(screenshotData);
+
+                    // Fügen Sie die Screenshots in die Tabelle "screenshots" ein und verknüpfen Sie sie mit der Fehlermeldung
+                    connection.query('INSERT INTO screenshots (report_id, screenshot_filename) VALUES (?, ?)', [reportId, screenshotFileName], (err) => {
+                        if (err) {
+                            console.error(err);
+                            res.status(500).send('Fehler beim Speichern des Screenshots');
+                        } else {
+                            res.redirect('/report?success');
+                        }
+                    });
+                } else {
+                    // Keine Datei wurde hochgeladen, Sie können hier eine Meldung oder Umleitung hinzufügen
+                    res.redirect('/report?success');
+                }
+                
+
+                //res.redirect('/report?success');
+            }
+        });
+        connection.release();
+    
+    });   
 });
 
 
 app.get('/overview', (req, res) => {
-    // Hier kannst du die Fehlerdaten aus der Datenbank abrufen (anpassen)
-    connection.query('SELECT * FROM reports WHERE notifier_id = ?', [req.session.user.id], (err, results) => {
+    pool.getConnection((err, connection) => {
         if (err) {
-            console.error(err);
-            res.status(500).send('Fehler beim Abrufen der reports');
-        } else {
-            // Rendere die overview.html-Seite und übergebe die Fehlerdaten an die Vorlage
-            res.render('overview', { reports: results });
+            console.error('Fehler beim Abrufen der Verbindung aus dem Pool:', err);
+            res.status(500).send('Fehler bei der Anmeldung');
+            return;
         }
+
+        // Hier kannst du die Fehlerdaten aus der Datenbank abrufen (anpassen)
+        connection.query('SELECT * FROM reports WHERE notifier_id = ?', [req.session.user.id], (err, results) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send('Fehler beim Abrufen der reports');
+            } else {
+                // Rendere die overview.html-Seite und übergebe die Fehlerdaten an die Vorlage
+                res.render('overview', { reports: results });
+            }
+        });
+    connection.release();
+        
     });
 });
 
 app.get('/bearbeiterMeineFehler', (req, res) => {
+    pool.getConnection((err, connection) => {
+        if (err) {
+            console.error('Fehler beim Abrufen der Verbindung aus dem Pool:', err);
+            res.status(500).send('Fehler bei der Anmeldung');
+            return;
+        }
+
         // Überprüfe, ob der Benutzer angemeldet ist und die Rolle "Bearbeiter" hat
         if (req.session.user && req.session.user.role === 'bearbeiter') {
             // Hier kannst du den Inhalt der Bearbeiterseite anzeigen
@@ -281,125 +347,155 @@ app.get('/bearbeiterMeineFehler', (req, res) => {
             // Benutzer hat keine Berechtigung, zur Startseite oder einer Fehlerseite umleiten
             res.redirect('/report');
         }
-
+        connection.release();
+        
+    });
 
 });
 
 app.get('/alleFehler', (req, res) => {
-
-        // Überprüfe, ob der Benutzer angemeldet ist und die Rolle "Bearbeiter" hat
-        if (req.session.user && req.session.user.role === 'bearbeiter') {
-            // Hier kannst du den Inhalt der Bearbeiterseite anzeigen
-            connection.query('SELECT * FROM reports ORDER BY date DESC, status ASC', (err, results) => {
-                if (err) {
-                    console.error(err);
-                    res.status(500).send('Fehler beim Abrufen aller reports');
-                } else {
-                    // Rendere die alleFehler.ejs-Seite und übergebe die Fehlerdaten an die Vorlage
-                    res.render('alleFehler', { reports: results });
-                }
-            });
-        } else {
-            // Daten aus der Datenbank abrufen
-
-             // Benutzer hat keine Berechtigung, zur Startseite oder einer Fehlerseite umleiten
-            res.redirect('/report');
+    pool.getConnection((err, connection) => {
+        if (err) {
+            console.error('Fehler beim Abrufen der Verbindung aus dem Pool:', err);
+            res.status(500).send('Fehler bei der Anmeldung');
+            return;
         }
 
+            // Überprüfe, ob der Benutzer angemeldet ist und die Rolle "Bearbeiter" hat
+            if (req.session.user && req.session.user.role === 'bearbeiter') {
+                // Hier kannst du den Inhalt der Bearbeiterseite anzeigen
+                connection.query('SELECT * FROM reports ORDER BY date DESC, status ASC', (err, results) => {
+                    if (err) {
+                        console.error(err);
+                        res.status(500).send('Fehler beim Abrufen aller reports');
+                    } else {
+                        // Rendere die alleFehler.ejs-Seite und übergebe die Fehlerdaten an die Vorlage
+                        res.render('alleFehler', { reports: results });
+                    }
+                });
+            } else {
+                // Daten aus der Datenbank abrufen
+
+                // Benutzer hat keine Berechtigung, zur Startseite oder einer Fehlerseite umleiten
+                res.redirect('/report');
+            }
+        connection.release();
+        
+    });
 
 });
 
 app.get('/bearbeiten/:id', (req, res) => {
     const fehlerId = req.params.id;
 
-    // Hier holst du die Daten für den ausgewählten Fehler (fehlerId) aus deiner Datenbank
-    connection.query('SELECT * FROM reports WHERE id = ?', [fehlerId], (err, results) => {
+    pool.getConnection((err, connection) => {
         if (err) {
-            console.error(err);
-            res.status(500).send('Fehler beim Abrufen des Fehlers');
-        } else {
-            if (results.length > 0) {
-                const fehler = results[0];
-
-                // Hier holst du die Liste der Benutzer mit der Rolle "Bearbeiter" aus deiner Datenbank
-                connection.query('SELECT * FROM users WHERE role = "bearbeiter"', (err, bearbeiter) => {                 
-                    if (err) {
-                        console.error(err);
-                        res.status(500).send('Fehler beim Abrufen der Bearbeiter');
-                    } else {
-                        // Hier holst du die Benutzer-ID des notifier_id-Benutzers aus deiner Datenbank
-                        const notifierId = fehler.notifier_id;
-                        connection.query('SELECT username FROM users WHERE id = ?', [notifierId], (err, usernameResult) => {
-                            if (err) {
-                                console.error(err);
-                                res.status(500).send('Fehler beim Abrufen der Benutzer-E-Mail-Adresse');
-                            } else {
-                                const notifierUsername = usernameResult[0].username;
-
-                                // Hier holst du die Screenshots für den Fehlerbericht aus der Datenbank
-                                connection.query('SELECT * FROM screenshots WHERE report_id = ?', [fehler.id], (err, screenshotResults) => {
-                                    if (err) {
-                                        console.error(err);
-                                        res.status(500).send('Fehler beim Abrufen der Screenshots');
-                                    } else {
-                                        // Verarbeite die Screenshots, indem du sicherstellst, dass screenshotResult.screenshot_data nicht null ist
-                                        const screenshots = screenshotResults.map((screenshotResult) => screenshotResult.screenshot_filename);
-                                        // Rendere die "bearbeiten.ejs"-Seite und übergebe die Daten an die Vorlage
-                                        console.log(screenshots);
-                                        res.render('bearbeiten', { fehler, bearbeiter, notifierUsername, screenshots });
-                                    }
-                                });
-                            }
-                        });
-                    }
-                });
-            } else {
-                res.status(404).send('Fehler nicht gefunden');
-            }
+            console.error('Fehler beim Abrufen der Verbindung aus dem Pool:', err);
+            res.status(500).send('Fehler bei der Anmeldung');
+            return;
         }
+
+        // Hier holst du die Daten für den ausgewählten Fehler (fehlerId) aus deiner Datenbank
+        connection.query('SELECT * FROM reports WHERE id = ?', [fehlerId], (err, results) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send('Fehler beim Abrufen des Fehlers');
+            } else {
+                if (results.length > 0) {
+                    const fehler = results[0];
+
+                    // Hier holst du die Liste der Benutzer mit der Rolle "Bearbeiter" aus deiner Datenbank
+                    connection.query('SELECT * FROM users WHERE role = "bearbeiter"', (err, bearbeiter) => {                 
+                        if (err) {
+                            console.error(err);
+                            res.status(500).send('Fehler beim Abrufen der Bearbeiter');
+                        } else {
+                            // Hier holst du die Benutzer-ID des notifier_id-Benutzers aus deiner Datenbank
+                            const notifierId = fehler.notifier_id;
+                            connection.query('SELECT username FROM users WHERE id = ?', [notifierId], (err, usernameResult) => {
+                                if (err) {
+                                    console.error(err);
+                                    res.status(500).send('Fehler beim Abrufen der Benutzer-E-Mail-Adresse');
+                                } else {
+                                    const notifierUsername = usernameResult[0].username;
+
+                                    // Hier holst du die Screenshots für den Fehlerbericht aus der Datenbank
+                                    connection.query('SELECT * FROM screenshots WHERE report_id = ?', [fehler.id], (err, screenshotResults) => {
+                                        if (err) {
+                                            console.error(err);
+                                            res.status(500).send('Fehler beim Abrufen der Screenshots');
+                                        } else {
+                                            // Verarbeite die Screenshots, indem du sicherstellst, dass screenshotResult.screenshot_data nicht null ist
+                                            const screenshots = screenshotResults.map((screenshotResult) => screenshotResult.screenshot_filename);
+                                            // Rendere die "bearbeiten.ejs"-Seite und übergebe die Daten an die Vorlage
+                                            console.log(screenshots);
+                                            res.render('bearbeiten', { fehler, bearbeiter, notifierUsername, screenshots });
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    res.status(404).send('Fehler nicht gefunden');
+                }
+            }
+        });
+    connection.release();
+        
     });
 });
 
 app.get('/bearbeiten-melder/:id', (req, res) => {
     const fehlerId = req.params.id;
 
-    // Hier holst du die Daten für den ausgewählten Fehler (fehlerId) aus deiner Datenbank
-    //connection.query('SELECT * FROM reports WHERE id = ?', [fehlerId], (err, results) => {
-    connection.query('SELECT reports.*, users.username AS assignee_name FROM reports LEFT JOIN users ON reports.assignee_id = users.id WHERE reports.id = ?', [fehlerId], (err, results) => {
-        
+    pool.getConnection((err, connection) => {
         if (err) {
-            console.error(err);
-            res.status(500).send('Fehler beim Abrufen des Fehlers');
-        } else {
-            if (results.length > 0) {
-                const fehler = results[0];
-
-                 // Hier holst du die Screenshots für den Fehlerbericht aus der Datenbank
-                 connection.query('SELECT * FROM screenshots WHERE report_id = ?', [fehler.id], (err, screenshotResults) => {
-                    if (err) {
-                        console.error(err);
-                        res.status(500).send('Fehler beim Abrufen der Screenshots');
-                    } else {
-                        // Verarbeite die Screenshots, indem du sicherstellst, dass screenshotResult.screenshot_data nicht null ist
-                        const screenshots = screenshotResults.map((screenshotResult) => {
-                            //if (screenshotResult.screenshot_data) {
-                            if (screenshotResult.screenshot_filename) {
-                                return {
-                                    //base64Screenshot: screenshotResult.screenshot_data.toString('base64'),
-                                    filename: screenshotResult.screenshot_filename
-                                };
-                            }
-                            return null; // Wenn screenshot_data null ist, überspringe diesen Screenshot
-                        }).filter((screenshot) => screenshot !== null);
-
-                        // Rendere die "bearbeiten.ejs"-Seite und übergebe die Daten an die Vorlage
-                        res.render('bearbeiten-melder', { fehler, screenshots });
-                    }
-                });
-            } else {
-                res.status(404).send('Fehler nicht gefunden');
-            }
+            console.error('Fehler beim Abrufen der Verbindung aus dem Pool:', err);
+            res.status(500).send('Fehler bei der Anmeldung');
+            return;
         }
+
+        // Hier holst du die Daten für den ausgewählten Fehler (fehlerId) aus deiner Datenbank
+        //connection.query('SELECT * FROM reports WHERE id = ?', [fehlerId], (err, results) => {
+        connection.query('SELECT reports.*, users.username AS assignee_name FROM reports LEFT JOIN users ON reports.assignee_id = users.id WHERE reports.id = ?', [fehlerId], (err, results) => {
+            
+            if (err) {
+                console.error(err);
+                res.status(500).send('Fehler beim Abrufen des Fehlers');
+            } else {
+                if (results.length > 0) {
+                    const fehler = results[0];
+
+                    // Hier holst du die Screenshots für den Fehlerbericht aus der Datenbank
+                    connection.query('SELECT * FROM screenshots WHERE report_id = ?', [fehler.id], (err, screenshotResults) => {
+                        if (err) {
+                            console.error(err);
+                            res.status(500).send('Fehler beim Abrufen der Screenshots');
+                        } else {
+                            // Verarbeite die Screenshots, indem du sicherstellst, dass screenshotResult.screenshot_data nicht null ist
+                            const screenshots = screenshotResults.map((screenshotResult) => {
+                                //if (screenshotResult.screenshot_data) {
+                                if (screenshotResult.screenshot_filename) {
+                                    return {
+                                        //base64Screenshot: screenshotResult.screenshot_data.toString('base64'),
+                                        filename: screenshotResult.screenshot_filename
+                                    };
+                                }
+                                return null; // Wenn screenshot_data null ist, überspringe diesen Screenshot
+                            }).filter((screenshot) => screenshot !== null);
+
+                            // Rendere die "bearbeiten.ejs"-Seite und übergebe die Daten an die Vorlage
+                            res.render('bearbeiten-melder', { fehler, screenshots });
+                        }
+                    });
+                } else {
+                    res.status(404).send('Fehler nicht gefunden');
+                }
+            }
+        });
+        connection.release();
+    
     });
 });
 
@@ -413,14 +509,24 @@ app.post('/speichernBearbeitung/:id', (req, res) => {
     const assignee_id = req.body.assignee_id;
     const message = req.body.message;
 
-    connection.query('UPDATE reports SET status = ?, prio = ?, assignee_id = ?, message = ? WHERE id = ?', [status, prio, assignee_id, message, id], (err) => {
+    pool.getConnection((err, connection) => {
         if (err) {
-            console.error(err);
-            res.status(500).send('Fehler beim Speichern der Änderungen');
-        } else {
-            // Nach dem Speichern der Änderungen zurückspringen zur alleFehler-Ansicht oder einer anderen Seite
-            res.redirect('/alleFehler');
+            console.error('Fehler beim Abrufen der Verbindung aus dem Pool:', err);
+            res.status(500).send('Fehler bei der Anmeldung');
+            return;
         }
+
+        connection.query('UPDATE reports SET status = ?, prio = ?, assignee_id = ?, message = ? WHERE id = ?', [status, prio, assignee_id, message, id], (err) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send('Fehler beim Speichern der Änderungen');
+            } else {
+                // Nach dem Speichern der Änderungen zurückspringen zur alleFehler-Ansicht oder einer anderen Seite
+                res.redirect('/alleFehler');
+            }
+        });
+    connection.release();
+        
     });
 });
 
@@ -434,19 +540,29 @@ app.post('/speichernBearbeitung-melder/:id', (req, res) => {
     const comment = req.body.comment;
     const status = "in bearbeitung";
 
-    connection.query(
-        'UPDATE reports SET modul = ?, category = ?, resource = ?, minute = ?, site = ?, comment = ?, status = ? WHERE id = ?',
-        [modul, category, resource, minute, seite, comment, status, id],
-        (err) => {
-            if (err) {
-                console.error(err);
-                res.status(500).send('Fehler beim Speichern der Änderungen');
-            } else {
-                // Nach dem Speichern der Änderungen zurückspringen zur alleFehler-Ansicht oder einer anderen Seite
-                res.redirect('/overview');
-            }
+    pool.getConnection((err, connection) => {
+        if (err) {
+            console.error('Fehler beim Abrufen der Verbindung aus dem Pool:', err);
+            res.status(500).send('Fehler bei der Anmeldung');
+            return;
         }
-    );
+
+        connection.query(
+            'UPDATE reports SET modul = ?, category = ?, resource = ?, minute = ?, site = ?, comment = ?, status = ? WHERE id = ?',
+            [modul, category, resource, minute, seite, comment, status, id],
+            (err) => {
+                if (err) {
+                    console.error(err);
+                    res.status(500).send('Fehler beim Speichern der Änderungen');
+                } else {
+                    // Nach dem Speichern der Änderungen zurückspringen zur alleFehler-Ansicht oder einer anderen Seite
+                    res.redirect('/overview');
+                }
+            }
+        );
+        connection.release();
+    
+    });
 });
 
 app.get('/setLanguage/:language', (req, res) => {

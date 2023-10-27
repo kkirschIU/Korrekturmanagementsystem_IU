@@ -45,5 +45,12 @@
 	"navTitleReport": "Melden",
 	"navTitleMyReports": "Meine Meldungen",
 	"navTitleAssignedReports": "Zugewiesene Meldungen",
-	"navTitleAllReports": "Alle Meldunge"
+	"navTitleAllReports": "Alle Meldungen",
+	"statusNew": "Neu",
+	"statusWorking": "In Bearbeitung",
+	"statusDone": "Abgeschlossen",
+	"statusNotClear": "unklar",
+	"statusRejected": "Abgelehnt",
+	"prioUncritical": "unkritisch",
+	"prioCritical": "kritisch"
 }

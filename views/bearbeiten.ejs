@@ -22,18 +22,35 @@
             </div>
 
             <div class="form-group">
-                <label for="category"><%= __("classLabel") %></label>
-                <input type="text" class="form-control" id="class" name="class" value="<%= fehler.class %>" readonly>
+                <label for="category"><%= __("classLabel") %></label>               
+                <select class="form-control" id="class" name="class" disabled>
+                    <option value="Fehler" <%= fehler.class === 'Fehler' ? 'selected' : '' %>><%= __("Error") %></option>
+                    <option value="Verbesserung" <%= fehler.class === 'Verbesserung' ? 'selected' : '' %>><%= __("Improvement") %></option>
+                    <option value="Erweiterung" <%= fehler.class === 'Erweiterung' ? 'selected' : '' %>><%= __("Expansion") %></option>
+                </select>
             </div>
     
             <div class="form-group">
                 <label for="category"><%= __("categoryLabel") %></label>
-                <input type="text" class="form-control" id="category" name="category" value="<%= fehler.category %>" readonly>
+                <select class="form-control" id="category" name="category" disabled>
+                    <option value="Inhaltlich" <%= fehler.category === 'Inhaltlich' ? 'selected' : '' %>><%= __("Content-related") %></option>
+                    <option value="Sprachlich" <%= fehler.category === 'Sprachlich' ? 'selected' : '' %>><%= __("Linguistic") %></option>
+                    <option value="Technisch" <%= fehler.category === 'Technisch' ? 'selected' : '' %>><%= __("Technical") %></option>
+                </select>
             </div>
     
             <div class="form-group">
                 <label for="resource"><%= __("resourceLabel") %></label>
-                <input type="text" class="form-control" id="resource" name="resource" value="<%= fehler.resource %>" readonly>
+                <select class="form-control" id="resource" name="resource" disabled>
+                    <option value="Script" <%= fehler.resource === 'Script' ? 'selected' : '' %>><%= __("Script") %></option>
+                    <option value="Interactive Script" <%= fehler.resource === 'Interactive Script' ? 'selected' : '' %>><%= __("Interactive Script") %></option>
+                    <option value="Musterklausur" <%= fehler.resource === 'Musterklausur' ? 'selected' : '' %>><%= __("Sample-Exam") %></option>
+                    <option value="Online Test" <%= fehler.resource === 'Online Test' ? 'selected' : '' %>><%= __("Online-Test") %></option>
+                    <option value="Präsentation" <%= fehler.resource === 'Präsentation' ? 'selected' : '' %>><%= __("Presentation") %></option>
+                    <option value="Vodcast" <%= fehler.resource === 'Vodcast' ? 'selected' : '' %>><%= __("Vodcast") %></option>
+                    <option value="Podcast" <%= fehler.resource === 'Podcast' ? 'selected' : '' %>><%= __("Podcast") %></option>
+                    <option value="Library Service" <%= fehler.resource === 'Library Service' ? 'selected' : '' %>><%= __("Library Service") %></option>
+                </select>
             </div>
     
             <div class="form-group">
@@ -88,19 +105,19 @@
             <div class="form-group">
                 <label for="status">Status:</label>
                 <select class="form-control" id="status" name="status" required>
-                    <option value="Neu" <%= fehler.status === 'Neu' ? 'selected' : '' %>>Neu</option>
-                    <option value="in Bearbeitung" <%= fehler.status === 'in Bearbeitung' ? 'selected' : '' %>>In Bearbeitung</option>
-                    <option value="Abgeschlossen" <%= fehler.status === 'Abgeschlossen' ? 'selected' : '' %>>Abgeschlossen</option>
-                    <option value="unklar" <%= fehler.status === 'unklar' ? 'selected' : '' %>>unklar</option>
-                    <option value="Abgelehnt" <%= fehler.status === 'Abgelehnt' ? 'selected' : '' %>>Abgelehnt</option>
+                    <option value="Neu" <%= fehler.status === 'Neu' ? 'selected' : '' %>><%= __("statusNew") %></option>
+                    <option value="in Bearbeitung" <%= fehler.status === 'in Bearbeitung' ? 'selected' : '' %>><%= __("statusWorking") %></option>
+                    <option value="Abgeschlossen" <%= fehler.status === 'Abgeschlossen' ? 'selected' : '' %>><%= __("statusDone") %></option>
+                    <option value="unklar" <%= fehler.status === 'unklar' ? 'selected' : '' %>><%= __("statusNotClear") %></option>
+                    <option value="Abgelehnt" <%= fehler.status === 'Abgelehnt' ? 'selected' : '' %>><%= __("statusRejected") %></option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="prio">Prio.</label>
                 <select class="form-control" id="prio" name="prio" required>
-                    <option value="unkritisch" <%= fehler.prio === 'unkritisch' ? 'selected' : '' %>>unkritisch</option>
-                    <option value="kritisch" <%= fehler.prio === 'kritisch' ? 'selected' : '' %>>kritisch</option>
+                    <option value="unkritisch" <%= fehler.prio === 'unkritisch' ? 'selected' : '' %>><%= __("prioUncritical") %></option>
+                    <option value="kritisch" <%= fehler.prio === 'kritisch' ? 'selected' : '' %>><%= __("prioCritical") %></option>
                 </select>
             </div>
 

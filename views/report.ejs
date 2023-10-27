@@ -79,7 +79,8 @@
 
                     <div class="form-group">
                         <label for="screenshot"><%= __("screenshotLabel") %></label>
-                        <input type="file" class="form-control-file" id="screenshot" name="screenshots">
+                        <input type="file" class="form-control-file" id="screenshot" name="screenshots" onchange="validateFile()">
+                        <small id="fileError" style="color: red;"></small>
                     </div>
 
                     <div class="form-group">
@@ -99,7 +100,33 @@
 
     <script>
         
+        function validateFile() {
+                const fileInput = document.getElementById('screenshot');
+                const fileError = document.getElementById('fileError');
+                const allowedTypes = ['image/jpeg', 'image/png']; // Erlaubte Dateitypen
+
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    if (!allowedTypes.includes(file.type)) {
+                        fileError.textContent = 'Dieser Dateityp wird nicht unterstützt.';
+                        fileInput.value = ''; // Leere das Dateieingabefeld
+                        return;
+                    }
+
+                    if (file.size > 2 * 1024 * 1024) {
+                        fileError.textContent = 'Die maximale Dateigröße von 2 MB wurde überschritten.';
+                        fileInput.value = ''; // Leere das Dateieingabefeld
+                        return;
+                    }
+                }
+        
+                // Wenn Dateityp und Größe gültig sind, lösche die Fehlermeldung
+                fileError.textContent = '';
+            }
+
         $(document).ready(function() {
+
+
                
             // Überprüfen, ob die URL den Parameter "success" enthält
             const urlParams = new URLSearchParams(window.location.search);
@@ -114,6 +141,8 @@
             $('#resource').on('change', function() {
                 toggleFields();
             });
+
+            
 
             function toggleFields() {
             const selectedResource = $('#resource').val();

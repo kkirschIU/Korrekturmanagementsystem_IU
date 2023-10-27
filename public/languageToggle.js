@@ -18,15 +18,41 @@ function setCookie(name, value, days) {
     document.cookie = cookieValue;
 }
 
+$(document).ready(function() {
+
+
+});
+
 document.getElementById("language-toggle").addEventListener("click", function () {
     // Hier kannst du die Sprache umschalten
     const userLocale = getCookie('locale');
     let newLocale;
+    var table = $('#errorTable').DataTable( {
+        "language": {
+            url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/de-DE.json'
+        }
+    });
+    table
+
+
+    table.destroy();
 
     if (userLocale === 'de') {
         newLocale = 'en';
+        table = $('#errorTable').DataTable( {
+            "language": {
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/de-DE.json'
+            }
+        });
+        table
     } else {
         newLocale = 'de';
+        table = $('#errorTable').DataTable( {
+            "language": {
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/de-DE.json'
+            }
+        });
+        table
     }
 
     // Konsolenausgabe für Debugging

@@ -45,5 +45,12 @@
 	"navTitleReport": "Report",
 	"navTitleMyReports": "My Reports",
 	"navTitleAssignedReports": "Assigned Reports",
-	"navTitleAllReports": "All Reports"
+	"navTitleAllReports": "All Reports",
+	"statusNew": "New",
+	"statusWorking": "Working",
+	"statusDone": "Done",
+	"statusNotClear": "Not clear",
+	"statusRejected": "Rejected",
+	"prioUncritical": "Uncritical",
+	"prioCritical": "Critical"
 }
