@@ -27,32 +27,32 @@ document.getElementById("language-toggle").addEventListener("click", function ()
     // Hier kannst du die Sprache umschalten
     const userLocale = getCookie('locale');
     let newLocale;
-    var table = $('#errorTable').DataTable( {
+    /*var table = $('#errorTable').DataTable( {
         "language": {
             url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/de-DE.json'
         }
     });
-    table
+    table*/
 
 
-    table.destroy();
+    //table.destroy();
 
     if (userLocale === 'de') {
         newLocale = 'en';
-        table = $('#errorTable').DataTable( {
+        /*table = $('#errorTable').DataTable( {
             "language": {
                 url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/de-DE.json'
             }
         });
-        table
+        table*/
     } else {
         newLocale = 'de';
-        table = $('#errorTable').DataTable( {
+        /*table = $('#errorTable').DataTable( {
             "language": {
                 url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/de-DE.json'
             }
         });
-        table
+        table*/
     }
 
     // Konsolenausgabe für Debugging
